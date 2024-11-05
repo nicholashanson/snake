@@ -1,9 +1,7 @@
 #include "Journey.h"
 
 // special members
-Journey::Journey(square_t start, square_t finish): current_status( ACTIVE )
-{calculate_journey(start, finish);}
-
+Journey::Journey(){}
 Journey::~Journey(){}
 
 // getters
@@ -19,26 +17,11 @@ auto Journey::get_steps_one_size() const -> int
 auto Journey::get_steps_two_size() const -> int
 {return steps_two.size();}
 
-// actions
-auto Journey::fetch_next_step(Game *game) -> direction_t
-{
-    direction_t next_step;
-    if ( !steps_one.empty()
-         && game->set_direction( steps_one.front() ) ){
-        next_step = steps_one.front();
-        steps_one.pop();
-    }
-    else {
-        game->set_direction( steps_two.front() );
-        next_step = steps_two.front();
-        steps_two.pop();
-    }
-    if ( steps_one.empty()
-         && steps_two.empty())
-        current_status = OVER;
-    return next_step;
-}
+// setters
+auto Journey::set_status(const status_t new_status) -> void
+{current_status = new_status;}
 
+// actions
 auto Journey::reset(const square_t start, const square_t finish) -> void
 {
     calculate_journey( start, finish );

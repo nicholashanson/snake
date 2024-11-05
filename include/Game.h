@@ -1,11 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
 #include "PointsCounter.h"
+#include "Journey.h"
 #include "Snake.h"
 #include "Apple.h"
 #include "settings.h"
 #include "macros.h"
-#include <iostream>
 
 class Game
 {
@@ -33,8 +33,12 @@ class Game
         auto set_direction(direction_t) -> bool;
         auto set_apple_position(int,int) -> void;
         auto set_difficulty(difficulty_t) -> void;
+        auto set_journey() -> void;
 
         // actions
+        auto advance_game() -> void;
+        auto advance_journey() -> void;
+
         // snake
         auto move_snake() -> void;
         auto move_snake(direction_t) -> void;
@@ -65,7 +69,9 @@ class Game
 
         auto count_available_squares() -> int;
         auto calculate_available_squares_for_apple_spawning() -> void;
+    #ifndef TEST
     private:
+    #endif
         double current_speed;
         status_t current_status;
         difficulty_t difficulty;
@@ -74,9 +80,9 @@ class Game
         Apple apple;
         PointsCounter points_counter;
 
+        Journey current_journey;
+
         std::vector<square_t> available_squares_for_apple_spawning;
 };
 
 #endif // GAME_H
-
-

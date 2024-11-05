@@ -125,15 +125,3 @@ auto Snake::empty_snake() -> void
 
 auto Snake::add_to_snake(const int x, const int y) -> void
 {push( { x, y } );}
-
-
-
-
-
-
-
-
-
-
-
-

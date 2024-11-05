@@ -1,8 +1,7 @@
-//#define TEST
 #ifndef TEST
 #include "raylib.h"
 #include "ui_settings.h"
-#include "Journey.h"
+#include "Game.h"
 
 void draw_apple(int i, int j)
 {
@@ -30,15 +29,23 @@ void for_each_member(int **board, int condition, void (*func)(int,int)){
 int main(void)
 {
     Game game;
-    Journey journey( game.get_snake_head(), game.get_apple_position() );
+    game.set_journey();
 
     InitWindow(settings::window_width,
                settings::window_height,
                "Snake");
-    SetTargetFPS(2);
+    SetTargetFPS(4);
 
     while ( OVER != game.get_status() )
     {
+        game.advance_game();
+
+        if ( IsKeyPressed ( KEY_SPACE ) )
+            if ( PAUSED == game.get_status() )
+                game.set_status( ACTIVE );
+            else
+                game.set_status( PAUSED );
+
         int **board = game.get_board();
 
         BeginDrawing();
@@ -47,23 +54,9 @@ int main(void)
         for_each_member(board, 1, draw_snake);
         EndDrawing();
 
-        if ( ACTIVE == journey.get_status() ){
-            journey.fetch_next_step( &game );
-        }
-        else if ( OVER == journey.get_status() ){
-            journey.reset( game.get_snake_head(), game.get_apple_position() );
-        }
-        game.move_snake();
         game.free_board(board);
-        if ( game.snake_has_collided_with_tail() )
-            game.set_status(OVER);
-        if ( game.snake_is_eating_apple() ){
-            game.eat_apple();
-            game.spawn_apple();
-        }
     }
     CloseWindow();
 }
 
 #endif
-

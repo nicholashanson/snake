@@ -218,3 +218,39 @@ auto Game::calculate_available_squares_for_apple_spawning() -> void
     std::move( squares.begin(), partition_p, std::back_inserter( available_squares_for_apple_spawning ) );
 }
 
+auto Game::advance_journey() -> void
+{
+    if ( !current_journey.steps_one.empty()
+         && set_direction( current_journey.steps_one.front() ) )
+        current_journey.steps_one.pop();
+    else {
+        set_direction( current_journey.steps_two.front() );
+        current_journey.steps_two.pop();
+    }
+    if ( current_journey.steps_one.empty()
+         && current_journey.steps_two.empty())
+        current_journey.set_status( OVER );
+}
+
+auto Game::set_journey() -> void
+{current_journey.calculate_journey( get_snake_head(), get_apple_position() );}
+
+auto Game::advance_game() -> void
+{
+    if ( PAUSED == get_status() )
+        return;
+
+    if ( ACTIVE == current_journey.get_status() )
+        advance_journey();
+    else
+        current_journey.reset( get_snake_head(), get_apple_position() );
+
+    move_snake();
+
+    if ( snake_has_collided_with_tail() )
+        set_status( OVER );
+    if ( snake_is_eating_apple() ){
+        eat_apple();
+        spawn_apple();
+    }
+}

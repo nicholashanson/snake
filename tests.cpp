@@ -1,7 +1,5 @@
-//#define TEST
 #ifdef TEST
 #include "Game.h"
-#include "Journey.h"
 #define BOOST_TEST_MODULE TestSuite
 #include <boost/test/included/unit_test.hpp>
 
@@ -93,7 +91,6 @@ BOOST_AUTO_TEST_CASE(SnakeMoveUpTest)
     BOOST_CHECK_EQUAL(second(game.get_snake_head()),settings::head_initial_y-3);
 }
 
-// 12. SnakeMoveDownTest
 BOOST_AUTO_TEST_CASE(SnakeMoveDownTest)
 {
     Game game;
@@ -103,7 +100,6 @@ BOOST_AUTO_TEST_CASE(SnakeMoveDownTest)
     BOOST_CHECK_EQUAL(second(game.get_snake_head()),settings::head_initial_y+2);
 }
 
-// 13. HeadTailCollisionTest
 BOOST_AUTO_TEST_CASE(HeadTailCollisionTest)
 {
     Game game;
@@ -117,7 +113,6 @@ BOOST_AUTO_TEST_CASE(HeadTailCollisionTest)
     BOOST_CHECK( game.snake_has_collided_with_tail() );
 }
 
-// 14. AppleBoundsTest
 BOOST_AUTO_TEST_CASE(AppleBoundsTest)
 {
     Game game;
@@ -128,7 +123,6 @@ BOOST_AUTO_TEST_CASE(AppleBoundsTest)
                 && second(game.get_apple_position()) <= settings::board_height);
 }
 
-// 15. AppleEatingTest
 BOOST_AUTO_TEST_CASE(AppleEatingTest)
 {
     Game game;
@@ -137,7 +131,6 @@ BOOST_AUTO_TEST_CASE(AppleEatingTest)
     BOOST_CHECK( game.snake_is_eating_apple() );
 }
 
-// 16. LeftBoundaryTest
 BOOST_AUTO_TEST_CASE(LeftBoundaryTest)
 {
     Game game;
@@ -149,7 +142,6 @@ BOOST_AUTO_TEST_CASE(LeftBoundaryTest)
     BOOST_CHECK_EQUAL(first(game.get_snake_head()), settings::board_width);
 }
 
-// 17. RightBoundaryTest
 BOOST_AUTO_TEST_CASE(RightBoundaryTest)
 {
     Game game;
@@ -164,7 +156,6 @@ BOOST_AUTO_TEST_CASE(RightBoundaryTest)
     BOOST_CHECK_EQUAL(first(game.get_snake_head()), 0);
 }
 
-// 18. UpperBoundaryTest
 BOOST_AUTO_TEST_CASE(UpperBoundaryTest)
 {
     Game game;
@@ -177,7 +168,6 @@ BOOST_AUTO_TEST_CASE(UpperBoundaryTest)
     BOOST_CHECK_EQUAL(second(game.get_snake_head()), settings::board_height);
 }
 
-// 19. LowerBoundaryTest
 BOOST_AUTO_TEST_CASE(LowerBoundaryTest)
 {
     Game game;
@@ -190,7 +180,6 @@ BOOST_AUTO_TEST_CASE(LowerBoundaryTest)
     BOOST_CHECK_EQUAL(second(game.get_snake_head()), 0);
 }
 
-// 20. InitialSpeedTest
 BOOST_AUTO_TEST_CASE(InitialSpeedTest)
 {
     Game game;
@@ -199,7 +188,6 @@ BOOST_AUTO_TEST_CASE(InitialSpeedTest)
                  == settings::initial_speeds[EASY]);
 }
 
-// 21. SpeedIncreaseTest
 BOOST_AUTO_TEST_CASE(SpeedIncreaseTest)
 {
     Game game;
@@ -210,7 +198,6 @@ BOOST_AUTO_TEST_CASE(SpeedIncreaseTest)
     BOOST_CHECK_EQUAL(game.get_current_speed(), settings::speed_increase_factor*speed);
 }
 
-// 22. NoReverseTest
 BOOST_AUTO_TEST_CASE(NoReverseTest)
 {
     Game game;
@@ -328,7 +315,6 @@ BOOST_AUTO_TEST_CASE(OnlyOneAppleBoardTest)
     BOOST_CHECK_EQUAL(number_of_apples, 1);
 }
 
-// 31. DirectionToggleClockwiseTest
 BOOST_AUTO_TEST_CASE(DirectionToggleClockwiseTest)
 {
     Game game;
@@ -342,102 +328,115 @@ BOOST_AUTO_TEST_CASE(DirectionToggleClockwiseTest)
     BOOST_CHECK_EQUAL(game.get_direction(), LEFT);
 }
 
-// 32. JourneyLengthTest
 BOOST_AUTO_TEST_CASE(JourneyLengthTest)
 {
     Game game;
     game.set_apple_position(settings::head_initial_x-2, settings::head_initial_y-2);
-    Journey journey(game.get_snake_head(), game.get_apple_position());
-    BOOST_CHECK_EQUAL(journey.get_steps_one_size(), 2);
-    BOOST_CHECK_EQUAL(journey.get_steps_two_size(), 2);
+    game.set_journey();
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_one_size(), 2);
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_two_size(), 2);
 }
 
-// 33. JourneyStepsOneEmptyTest
 BOOST_AUTO_TEST_CASE(JourneyStepsOneEmptyTest)
 {
     Game game;
     game.set_apple_position(settings::head_initial_x, settings::head_initial_y-2);
-    Journey journey(game.get_snake_head(), game.get_apple_position());
-    BOOST_CHECK_EQUAL(journey.get_steps_one_size(), 0);
-    BOOST_CHECK_EQUAL(journey.get_steps_two_size(), 2);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), UP);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), UP);
+    game.set_journey();
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_one_size(), 0);
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_two_size(), 2);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), UP);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), UP);
 }
 
-// 34. JourneyStepsTwoEmptyTest
 BOOST_AUTO_TEST_CASE(JourneyStepsTwoEmptyTest)
 {
     Game game;
     game.set_apple_position(settings::head_initial_x-2, settings::head_initial_y);
-    Journey journey(game.get_snake_head(), game.get_apple_position());
-    BOOST_CHECK_EQUAL(journey.get_steps_one_size(), 2);
-    BOOST_CHECK_EQUAL(journey.get_steps_two_size(), 0);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), LEFT);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), LEFT);
+    game.set_journey();
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_one_size(), 2);
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_two_size(), 0);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), LEFT);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), LEFT);
 }
 
-// 35. TopLeftJourneyDirectionTest
 BOOST_AUTO_TEST_CASE(TopLeftJourneyDirectionTest)
 {
     Game game;
     game.set_apple_position(settings::head_initial_x-2, settings::head_initial_y-2);
-    Journey journey(game.get_snake_head(), game.get_apple_position());
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), LEFT);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), LEFT);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), UP);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), UP);
-    BOOST_CHECK_EQUAL(journey.get_steps_one_size(), 0);
-    BOOST_CHECK_EQUAL(journey.get_steps_two_size(), 0);
+    game.set_journey();
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), LEFT);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), LEFT);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), UP);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), UP);
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_one_size(), 0);
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_two_size(), 0);
 }
 
-// 36. BottomLeftJourneyDirectionTest
 BOOST_AUTO_TEST_CASE(BottomLeftJourneyDirectionTest)
 {
     Game game;
     game.set_apple_position(settings::head_initial_x-2, settings::head_initial_y+2);
-    Journey journey(game.get_snake_head(), game.get_apple_position());
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), LEFT);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), LEFT);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), DOWN);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), DOWN);
-    BOOST_CHECK_EQUAL(journey.get_steps_one_size(), 0);
-    BOOST_CHECK_EQUAL(journey.get_steps_two_size(), 0);
+    game.set_journey();
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), LEFT);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), LEFT);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), DOWN);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), DOWN);
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_one_size(), 0);
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_two_size(), 0);
 }
 
-// 37. TopRightJourneyDirectionTest
 BOOST_AUTO_TEST_CASE(TopRightJourneyDirectionTest)
 {
     Game game;
     game.set_apple_position(settings::head_initial_x+2, settings::head_initial_y-2);
-    Journey journey(game.get_snake_head(), game.get_apple_position());
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), UP);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), RIGHT);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), RIGHT);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), UP);
-    BOOST_CHECK_EQUAL(journey.get_steps_one_size(), 0);
-    BOOST_CHECK_EQUAL(journey.get_steps_two_size(), 0);
+    game.set_journey();
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), UP);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), RIGHT);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), RIGHT);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), UP);
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_one_size(), 0);
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_two_size(), 0);
 }
 
-// 38. BottomRightJourneyDirectionTest
 BOOST_AUTO_TEST_CASE(BottomRightJourneyDirectionTest)
 {
     Game game;
     game.set_apple_position(settings::head_initial_x+2, settings::head_initial_y+2);
-    Journey journey(game.get_snake_head(), game.get_apple_position());
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), DOWN);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), RIGHT);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), RIGHT);
-    BOOST_CHECK_EQUAL(journey.fetch_next_step(&game), DOWN);
-    BOOST_CHECK_EQUAL(journey.get_steps_one_size(), 0);
-    BOOST_CHECK_EQUAL(journey.get_steps_two_size(), 0);
+    game.set_journey();
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), DOWN);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), RIGHT);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), RIGHT);
+    game.advance_journey();
+    BOOST_CHECK_EQUAL(game.get_direction(), DOWN);
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_one_size(), 0);
+    BOOST_CHECK_EQUAL(game.current_journey.get_steps_two_size(), 0);
 }
 
 BOOST_AUTO_TEST_CASE(TotalAvailableSquareTest)
 {
     Game game;
     game.calculate_available_squares_for_apple_spawning();
-    BOOST_CHECK_EQUAL( game.count_available_squares(),
-                       settings::total_squares - settings::initial_snake_length);
+    BOOST_CHECK_EQUAL(game.count_available_squares(),
+                      settings::total_squares - settings::initial_snake_length);
 }
 
 #endif

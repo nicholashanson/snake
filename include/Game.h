@@ -57,7 +57,7 @@ class Game
         auto spawn_apple(const int,const int) -> void;
 
         // checkers
-        auto snake_is_eating_apple() const -> bool;
+        auto head_is_at_apple() const -> bool;
         auto snake_contains(const square_t) const -> bool;
         auto snake_has_collided_with_tail() const -> bool;
         auto game_is_completed() const -> bool;

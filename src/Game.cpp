@@ -131,7 +131,7 @@ auto Game::spawn_apple(const int x, const int y) -> void
 {apple.spawn(x,y);}
 
 // checkers
-auto Game::snake_is_eating_apple() const -> bool
+auto Game::head_is_at_apple() const -> bool
 {
     if ( get_snake_head() == apple.get_position() )
         return true;
@@ -249,7 +249,7 @@ auto Game::advance_game() -> void
 
     if ( snake_has_collided_with_tail() )
         set_status( OVER );
-    if ( snake_is_eating_apple() ){
+    if ( head_is_at_apple() ){
         eat_apple();
         spawn_apple();
     }

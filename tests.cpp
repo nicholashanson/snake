@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(AppleEatingTest)
     Game game;
     game.spawn_apple(settings::head_initial_x-1, settings::head_initial_y);
     game.move_snake();
-    BOOST_CHECK( game.snake_is_eating_apple() );
+    BOOST_CHECK( game.head_is_at_apple() );
 }
 
 BOOST_AUTO_TEST_CASE(LeftBoundaryTest)
